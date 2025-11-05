@@ -10,8 +10,6 @@ This package provides tools for maximum entropy parameter fitting to match targe
 
 ### The Ising Model
 
-The Ising model describes a system of $N$ interacting binary spins $s_i = \pm 1$. The energy of a configuration $\mathbf{s} = (s_1, \ldots, s_N)$ is:
-
 $$E(s) = -\sum_{i<j} J_{ij} s_i s_j - \sum_i h_i s_i$$
 
 where:
