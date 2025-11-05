@@ -4,21 +4,19 @@ GPU-accelerated implementation of Ising model sampling and maximum entropy fitti
 
 ## Overview
 
-This package provides tools for:
-1. **Fast GPU-based Gibbs sampling** from Ising spin models
-2. **Maximum entropy parameter fitting** to match target magnetizations and correlations
+This package provides tools for maximum entropy parameter fitting to match target statistical properties (mean and correlations).
 
 ## Background
 
 ### The Ising Model
 
-The Ising model describes a system of $N$ interacting binary spins $s_i \in \\{-1, +1\\}$. The energy of a configuration $\mathbf{s} = (s_1, \ldots, s_N)$ is:
+The Ising model describes a system of $N$ interacting binary spins $s_i = \pm 1$. The energy of a configuration $\mathbf{s} = (s_1, \ldots, s_N)$ is:
 
 $$E(\mathbf{s}) = -\sum_{i<j} J_{ij} s_i s_j - \sum_i h_i s_i$$
 
 where:
-- $J_{ij}$ are pairwise coupling strengths (interactions between spins)
-- $h_i$ are external magnetic fields acting on each spin
+- $J_{ij}$ are pairwise couplings (interactions between random variables)
+- $h_i$ are external fields acting on each spin (exogenous variables, biases)
 - The first sum runs over all pairs of spins $(i,j)$ with $i < j$
 
 ### Boltzmann Distribution
@@ -48,31 +46,28 @@ $$P(s_i | \mathbf{s}_{-i}) = \frac{\exp(\beta s_i h_i^{\text{eff}})}{\exp(\beta 
 where the effective field is:
 $$h_i^{\text{eff}} = h_i + \sum_{j \neq i} J_{ij} s_j$$
 
-**Two-coloring optimization**: For certain graph structures (e.g., bipartite graphs), we can sample even and odd indexed spins in parallel, dramatically improving performance on GPUs.
-
 ### Maximum Entropy Principle
 
 Given target statistics $\langle s_i \rangle^{\text{target}}$ and $\langle s_i s_j \rangle^{\text{target}}$, we want to find parameters $(J, h)$ such that the model's statistics match the targets.
 
-The **maximum entropy principle** states that among all distributions matching the constraints, the one with maximum entropy is the Boltzmann distribution. This leads to the optimization problem:
+The **maximum entropy principle** states that among all distributions matching the constraints, the one with maximum entropy is the Boltzmann distribution. This leads to the Lagrangian optimization problem:
 
-**Minimize**: 
 $$\mathcal{L}(J, h) = \sum_i \left(\langle s_i \rangle^{\text{model}} - \langle s_i \rangle^{\text{target}}\right)^2 + \sum_{i<j} \left(\langle s_i s_j \rangle^{\text{model}} - \langle s_i s_j \rangle^{\text{target}}\right)^2$$
 
 ### Gradient Descent with Momentum
 
-The gradients of the log-likelihood with respect to parameters are remarkably simple:
+The gradients of the log-likelihood with respect to parameters are simple:
 
 $$\frac{\partial \log P}{\partial h_i} = \langle s_i \rangle^{\text{target}} - \langle s_i \rangle^{\text{model}}$$
 
 $$\frac{\partial \log P}{\partial J_{ij}} = \langle s_i s_j \rangle^{\text{target}} - \langle s_i s_j \rangle^{\text{model}}$$
 
-We use **momentum-based gradient ascent**:
+We use momentum-based gradient ascent:
 
 $$v_t = \gamma v_{t-1} + \eta \nabla_\theta \log P$$
 $$\theta_{t+1} = \theta_t + v_t$$
 
-where $\eta$ is the learning rate and $\gamma$ is the momentum coefficient (typically 0.9).
+where $\eta$ is the learning rate and $\gamma$ is the momentum.
 
 ## Usage
 
