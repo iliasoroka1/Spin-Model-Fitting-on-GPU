@@ -1,0 +1,5 @@
+numpy>=1.24.0
+jax>=0.4.0
+jaxlib>=0.4.0
+thrml
+
