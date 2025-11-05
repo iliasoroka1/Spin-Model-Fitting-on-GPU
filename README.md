@@ -47,8 +47,6 @@ $$h_i^{\text{eff}} = h_i + \sum_{j \neq i} J_{ij} s_j$$
 
 Given target statistics $\langle s_i \rangle^{\text{target}}$ and $\langle s_i s_j \rangle^{\text{target}}$, we want to find parameters $(J, h)$ such that the model's statistics match the targets.
 
-$$\mathcal{L}(J, h) = \sum\_i \left(\langle s\_i \rangle^{\text{model}} - \langle s\_i \rangle^{\text{target}}\right)^2 + \sum\_{i<j} \left(\langle s\_i s\_j \rangle^{\text{model}} - \langle s\_i s\_j \rangle^{\text{target}}\right)^2$$
-
 The gradients of the log-likelihood with respect to parameters are simple:
 
 $$\frac{\partial \log P}{\partial h_i} = \langle s_i \rangle^{\text{target}} - \langle s_i \rangle^{\text{model}}$$
